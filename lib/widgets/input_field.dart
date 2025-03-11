@@ -4,6 +4,7 @@ import '../constants/app_styles.dart';
 class InputField extends StatefulWidget {
   final String label;
   final TextInputType? keyboardType;
+  final TextEditingController? controller;
   final bool obscureText;
 
   const InputField({
@@ -11,6 +12,7 @@ class InputField extends StatefulWidget {
     required this.label,
     this.keyboardType,
     this.obscureText = false,
+    this.controller,
   });
 
   @override
