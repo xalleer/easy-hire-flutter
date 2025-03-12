@@ -49,7 +49,7 @@ class _DropdownFieldState extends State<DropdownField> {
           style: TextStyle(
             color:
                 _focusNode.hasFocus
-                    ? AppStyles.focusColor
+                    ? AppStyles.inputFocusBorder
                     : AppStyles.labelColor,
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -88,13 +88,13 @@ class _DropdownFieldState extends State<DropdownField> {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black, // Чіткий колір вибраного елемента
+                    color: AppStyles.menuItemColor,
                   ),
                 );
               }).toList();
             },
             style: const TextStyle(
-              color: Colors.black,
+              color: AppStyles.menuItemColor,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -104,14 +104,14 @@ class _DropdownFieldState extends State<DropdownField> {
               size: 24,
             ),
             isExpanded: true,
-            dropdownColor: Colors.white,
+            dropdownColor: AppStyles.menuBackgroundColor,
             elevation: 8,
             menuMaxHeight: 200,
             itemHeight: 60,
             borderRadius: BorderRadius.circular(AppStyles.borderRadius),
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.grey[200],
+              fillColor: AppStyles.inputFieldFill,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
                 vertical: 12.0,
@@ -123,14 +123,14 @@ class _DropdownFieldState extends State<DropdownField> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppStyles.borderRadius),
                 borderSide: const BorderSide(
-                  color: AppStyles.borderColor,
+                  color: AppStyles.inputBorder,
                   width: 1.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppStyles.borderRadius),
                 borderSide: const BorderSide(
-                  color: AppStyles.focusColor,
+                  color: AppStyles.inputFocusBorder,
                   width: 2.0,
                 ),
               ),

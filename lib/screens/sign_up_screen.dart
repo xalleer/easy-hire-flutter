@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/input_field.dart';
 import '../constants/app_styles.dart';
 import '../widgets/dropdown_field.dart';
+import '../widgets/button.dart';
 
 class SignUpScreen extends StatelessWidget {
   final String title;
@@ -73,12 +74,13 @@ class _SignUpFormState extends State<SignUpForm> {
           validator: (value) => value == null ? "Оберіть роль" : null,
         ),
 
-        const SizedBox(height: AppStyles.spacing * 2),
+        const SizedBox(height: AppStyles.spacing * 3),
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: Button(
+            text: 'Зареєструватися',
+            isLoading: false,
             onPressed: () {},
-            child: const Text('Зареєструватися'),
           ),
         ),
       ],

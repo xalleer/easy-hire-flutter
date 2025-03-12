@@ -21,11 +21,13 @@ class InputField extends StatefulWidget {
 
 class _InputFieldState extends State<InputField> {
   late FocusNode _focusNode;
+  late bool _isObscured;
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
+    _isObscured = widget.obscureText;
     _focusNode.addListener(() {
       setState(() {});
     });
@@ -47,7 +49,7 @@ class _InputFieldState extends State<InputField> {
           style: TextStyle(
             color:
                 _focusNode.hasFocus
-                    ? AppStyles.focusColor
+                    ? AppStyles.inputFocusBorder
                     : AppStyles.labelColor,
             fontSize: 13,
             fontWeight: FontWeight.w400,
@@ -57,10 +59,11 @@ class _InputFieldState extends State<InputField> {
         TextField(
           focusNode: _focusNode,
           keyboardType: widget.keyboardType,
-          obscureText: widget.obscureText,
+          obscureText: _isObscured,
+          controller: widget.controller,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[200],
+            fillColor: AppStyles.inputFieldFill,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppStyles.borderRadius),
               borderSide: BorderSide.none,
@@ -68,14 +71,14 @@ class _InputFieldState extends State<InputField> {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppStyles.borderRadius),
               borderSide: const BorderSide(
-                color: AppStyles.borderColor,
+                color: AppStyles.inputBorder,
                 width: 1.0,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppStyles.borderRadius),
               borderSide: const BorderSide(
-                color: AppStyles.focusColor,
+                color: AppStyles.inputFocusBorder,
                 width: 2.0,
               ),
             ),
@@ -83,6 +86,20 @@ class _InputFieldState extends State<InputField> {
               horizontal: 16.0,
               vertical: 8.0,
             ),
+            suffixIcon:
+                widget.obscureText
+                    ? IconButton(
+                      icon: Icon(
+                        _isObscured ? Icons.visibility_off : Icons.visibility,
+                        color: AppStyles.iconColor,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isObscured = !_isObscured;
+                        });
+                      },
+                    )
+                    : null,
           ),
         ),
       ],
