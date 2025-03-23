@@ -36,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
 
         if (response != null) {
           _showSuccessSnackBar("✅ Успішний логін через пошту");
+          Navigator.pushNamed(context, '/home');
         } else {
           _showErrorSnackBar("❌ Логін не вдалося здійснити");
         }
@@ -47,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
         if (response != null) {
           _showSuccessSnackBar("✅ Успішний логін через телефон");
+          Navigator.pushNamed(context, '/home');
         } else {
           _showErrorSnackBar("❌ Логін не вдалося здійснити");
         }

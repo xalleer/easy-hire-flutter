@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final String baseUrl = 'https://easy-hire-backend-gules.vercel.app';
@@ -45,6 +46,8 @@ class ApiService {
     required String email,
     required String password,
   }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     final url = Uri.parse('$baseUrl/api/auth/login');
 
     try {
@@ -55,7 +58,13 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        String token = responseData['token'];
+        await prefs.setString('authToken', token);
+        await prefs.setString('userInfo', jsonEncode(responseData['user']));
+
+        return responseData;
       } else {
         print("❌ Помилка логіну: ${response.body}");
         return null;
@@ -88,6 +97,18 @@ class ApiService {
     } catch (e) {
       print("❌ Помилка запиту: $e");
       return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> logout() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      await prefs.clear();
+
+      return {'status': 'success', 'message': 'Ви вийшли успішно'};
+    } catch (e) {
+      return {'status': 'error', 'message': 'Помилка при виході: $e'};
     }
   }
 }

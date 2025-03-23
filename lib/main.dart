@@ -1,3 +1,4 @@
+import 'package:easy_hire/core/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'core/screens/welcome_page.dart';
 import 'core/screens/login_page.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/signup': (context) => SignUpPage(),
         '/signup-next': (context) => SignUpNextPage(),
+        '/home': (context) => HomePage(),
       },
     );
   }
