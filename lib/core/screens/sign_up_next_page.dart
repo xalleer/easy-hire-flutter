@@ -10,7 +10,7 @@ import '../widgets/location_input.dart';
 import '../widgets/chip_input.dart';
 import '../widgets/section_header.dart';
 import '../widgets/chip_display.dart';
-import '../services/api_service.dart';
+import '../services/auth_api.dart';
 import '../models/user.dart';
 
 class SignUpNextPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class _SignUpNextPageState extends State<SignUpNextPage> {
   final TextEditingController workLocationsController = TextEditingController();
   final TextEditingController skillsController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  final authApi = AuthApi();
   XFile? _avatar;
   final ImagePicker _picker = ImagePicker();
   List<String> selectedWorkLocations = [];
@@ -163,10 +163,9 @@ class _SignUpNextPageState extends State<SignUpNextPage> {
     setState(() => _isRegistering = true);
 
     try {
-      final apiService = ApiService();
       final args = ModalRoute.of(context)!.settings.arguments as Map?;
 
-      final response = await apiService.signUpUser(
+      final response = await authApi.signUpUser(
         name: nameController.text,
         email: args?['email'] ?? "test2@test.com",
         phone: args?['phone'] ?? "1234567890",

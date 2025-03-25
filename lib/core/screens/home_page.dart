@@ -2,6 +2,9 @@ import 'package:easy_hire/core/screens/profile_page.dart';
 import 'package:flutter/material.dart';
 import '../constants/app_styles.dart';
 import '../screens/profile_page.dart' as profile;
+import '../screens/tasks_page.dart' as tasks;
+import '../screens/balance_page.dart' as balance;
+import '../screens/notification_page.dart' as notification;
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,14 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0; // Індекс вибраної вкладки
+  int _selectedIndex = 0;
 
-  // Список віджетів для кожної вкладки (не константний)
   final List<Widget> _widgetOptions = <Widget>[
-    profile.ProfilePage(), // Профіль
-    Center(child: Text('Завдання')), // Завдання
-    Center(child: Text('Налаштування')), // Налаштування
-    Center(child: Text('Баланс')), // Баланс
+    profile.ProfilePage(),
+    tasks.TasksPage(),
+    balance.BalancePage(),
+    notification.NotificationsPage(),
   ];
 
   // Функція для зміни вкладки
@@ -29,11 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _widgetOptions.elementAt(
-          _selectedIndex,
-        ), // Показує вкладку на основі індексу
-      ),
+      body: SafeArea(child: _widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -45,18 +43,30 @@ class _HomePageState extends State<HomePage> {
             label: 'Завдання',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Налаштування',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
             label: 'Баланс',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Сповіщення',
+          ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: AppStyles.primaryColor, // Колір вибраної іконки
-        unselectedItemColor: Colors.grey, // Колір невибраних іконок
-        onTap: _onItemTapped, // Обробка вибору вкладки
+        selectedItemColor:
+            AppStyles.primaryColor, // Залишив основний колір із констант
+        unselectedItemColor: Colors.grey[600], // Трішки темніший сірий
+        backgroundColor: Colors.white, // Фон білий для чистоти
+        type: BottomNavigationBarType.fixed, // Постійне відображення тексту
+        selectedFontSize: 14, // Розмір шрифту для вибраного
+        unselectedFontSize: 12, // Розмір шрифту для невибраного
+        elevation: 8, // Тінь для підняття над вмістом
+        iconSize: 28, // Збільшив розмір іконок
+        showUnselectedLabels: true, // Завжди показувати текст для невибраних
+        selectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.bold, // Жирний шрифт для вибраного
+        ),
+        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+        onTap: _onItemTapped,
       ),
     );
   }

@@ -3,7 +3,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/auth_toggle.dart';
 import '../constants/app_styles.dart';
-import '../services/api_service.dart';
+import '../services/auth_api.dart';
 import '../utils/validators.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final phoneController = MaskedTextController(mask: '+380 (00) 000-00-00');
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final ApiService apiService = ApiService();
+  final authApi = AuthApi();
 
   bool isEmailLogin = true;
   bool isLoading = false;
@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       if (isEmailLogin) {
-        final response = await apiService.loginEmailUser(
+        final response = await authApi.loginEmailUser(
           email: emailController.text,
           password: passwordController.text,
         );
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
           _showErrorSnackBar("❌ Логін не вдалося здійснити");
         }
       } else {
-        final response = await apiService.loginPhoneUser(
+        final response = await authApi.loginPhoneUser(
           phone: phoneController.text,
           password: passwordController.text,
         );
@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // Navigate to forgot password
+                        Navigator.pushNamed(context, '/forgot_password');
                       },
                       child: Text(
                         "Забули пароль?",
