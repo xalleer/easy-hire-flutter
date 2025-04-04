@@ -7,6 +7,8 @@ import '../utils/validators.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
   _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
 }

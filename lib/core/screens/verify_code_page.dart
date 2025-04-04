@@ -9,7 +9,7 @@ class VerifyCodePage extends StatefulWidget {
   isEmailReset; // To determine if the code was sent via email or phone
   final String identifier; // Email or phone number used for reset
 
-  VerifyCodePage({required this.isEmailReset, required this.identifier});
+  const VerifyCodePage({super.key, required this.isEmailReset, required this.identifier});
 
   @override
   _VerifyCodePageState createState() => _VerifyCodePageState();

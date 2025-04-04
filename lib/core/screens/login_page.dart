@@ -8,6 +8,8 @@ import '../utils/validators.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }

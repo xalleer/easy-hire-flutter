@@ -9,11 +9,11 @@ class AvatarPicker extends StatelessWidget {
   final double radius;
 
   const AvatarPicker({
-    Key? key,
+    super.key,
     required this.avatar,
     required this.onPickAvatar,
     this.radius = 50,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

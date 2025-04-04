@@ -7,11 +7,11 @@ class ChipDisplay extends StatelessWidget {
   final bool showDelete;
 
   const ChipDisplay({
-    Key? key,
+    super.key,
     required this.items,
     required this.onDelete,
     this.showDelete = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

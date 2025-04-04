@@ -11,7 +11,7 @@ class ChipInput extends StatelessWidget {
   final IconData icon;
 
   const ChipInput({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onCancel,
     required this.onAdd,
@@ -19,7 +19,7 @@ class ChipInput extends StatelessWidget {
     required this.onDelete,
     required this.labelText,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

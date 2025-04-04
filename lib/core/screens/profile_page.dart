@@ -5,6 +5,8 @@ import '../constants/app_styles.dart';
 import '../widgets/custom_button.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -88,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Карта профілю
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: Card(
                     elevation: 5,

@@ -14,6 +14,8 @@ import '../services/auth_api.dart';
 import '../models/user.dart';
 
 class SignUpNextPage extends StatefulWidget {
+  const SignUpNextPage({super.key});
+
   @override
   _SignUpNextPageState createState() => _SignUpNextPageState();
 }

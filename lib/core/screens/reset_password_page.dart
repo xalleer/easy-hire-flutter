@@ -6,7 +6,7 @@ import '../services/api_service.dart';
 import '../utils/validators.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  ResetPasswordPage();
+  const ResetPasswordPage({super.key});
 
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();

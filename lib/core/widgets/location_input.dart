@@ -12,7 +12,7 @@ class LocationInput extends StatelessWidget {
   final bool isDetecting;
 
   const LocationInput({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onSuggestionSelected,
     required this.suggestionsCallback,
@@ -20,7 +20,7 @@ class LocationInput extends StatelessWidget {
     required this.onAdd,
     required this.onAutoDetect,
     this.isDetecting = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

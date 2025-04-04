@@ -10,6 +10,8 @@ class SignUpPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final phoneController = MaskedTextController(mask: '+380 (00) 000-00-00');
 
+  SignUpPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

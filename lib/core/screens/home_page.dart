@@ -5,15 +5,17 @@ import '../screens/profile_page.dart' as profile;
 import '../screens/tasks_page.dart' as tasks;
 import '../screens/balance_page.dart' as balance;
 import '../screens/notification_page.dart' as notification;
+import '../services/user_api.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
   final List<Widget> _widgetOptions = <Widget>[
     profile.ProfilePage(),
     tasks.TasksPage(),

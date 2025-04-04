@@ -8,12 +8,12 @@ class AuthToggle extends StatelessWidget {
   final String rightLabel;
 
   const AuthToggle({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     required this.leftLabel,
     required this.rightLabel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

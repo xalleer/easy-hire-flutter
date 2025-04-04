@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../constants/app_styles.dart';
 
 class BalancePage extends StatefulWidget {
+  const BalancePage({super.key});
+
   @override
   _BalancePageState createState() => _BalancePageState();
 }
@@ -24,7 +26,7 @@ class _BalancePageState extends State<BalancePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Карта балансу з кнопками
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: Card(
                   elevation: 5,
