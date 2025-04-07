@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_styles.dart';
+import 'payment_page.dart'; // Додайте імпорт PaymentScreen
 
 class BalancePage extends StatefulWidget {
   const BalancePage({super.key});
@@ -9,6 +10,330 @@ class BalancePage extends StatefulWidget {
 }
 
 class _BalancePageState extends State<BalancePage> {
+  final TextEditingController _depositAmountController =
+      TextEditingController();
+  final TextEditingController _withdrawAmountController =
+      TextEditingController();
+  final TextEditingController _cardNumberController = TextEditingController();
+  bool _saveCard = false;
+
+  void _showDepositBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Поповнення балансу",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[800],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close, color: Colors.grey[600]),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _depositAmountController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: "Сума поповнення (грн)",
+                    hintText: "Введіть суму",
+                    prefixIcon: Icon(
+                      Icons.attach_money,
+                      color: Colors.blue[700],
+                    ),
+                    filled: true,
+                    fillColor: Colors.blue[50],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue[700]),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          "Мінімальна сума поповнення: 50 грн",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      String amountText = _depositAmountController.text;
+                      if (amountText.isNotEmpty) {
+                        double amount = double.tryParse(amountText) ?? 0;
+                        if (amount >= 50) {
+                          Navigator.pop(context); // Закриваємо BottomSheet
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => PaymentScreen(
+                                    amount: amount,
+                                    userId:
+                                        '67ca1ca9e4b4255ded20074d', // Замініть на реальний userId
+                                  ),
+                            ),
+                          ).then((result) {
+                            if (result != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Оплата успішна: $result'),
+                                ),
+                              );
+                            }
+                            _depositAmountController.clear();
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Сума має бути не менше 50 грн"),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[700],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                    ),
+                    child: const Text(
+                      "Поповнити",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showWithdrawBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Виведення коштів",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red[800],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close, color: Colors.grey[600]),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _withdrawAmountController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: "Сума виведення (грн)",
+                    hintText: "Введіть суму",
+                    prefixIcon: Icon(Icons.money_off, color: Colors.red[700]),
+                    filled: true,
+                    fillColor: Colors.red[50],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _cardNumberController,
+                  keyboardType: TextInputType.number,
+                  maxLength: 16,
+                  decoration: InputDecoration(
+                    labelText: "Номер картки",
+                    hintText: "XXXX XXXX XXXX XXXX",
+                    prefixIcon: Icon(Icons.credit_card, color: Colors.red[700]),
+                    filled: true,
+                    fillColor: Colors.red[50],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _saveCard,
+                      onChanged: (value) {
+                        setState(() {
+                          _saveCard = value ?? false;
+                        });
+                      },
+                      activeColor: Colors.red[700],
+                    ),
+                    Text(
+                      "Зберегти картку",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.red[700]),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          "Мінімальна сума виведення: 200 грн\nКомісія: 5%",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      String amount = _withdrawAmountController.text;
+                      String cardNumber = _cardNumberController.text;
+                      if (amount.isNotEmpty && cardNumber.length == 16) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Запит на виведення $amount грн на картку $cardNumber ${_saveCard ? "(картка збережена)" : ""}",
+                            ),
+                          ),
+                        );
+                        Navigator.pop(context);
+                        _withdrawAmountController.clear();
+                        if (!_saveCard) _cardNumberController.clear();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Перевірте введені дані"),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[700],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                    ),
+                    child: const Text(
+                      "Вивести",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _depositAmountController.dispose();
+    _withdrawAmountController.dispose();
+    _cardNumberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +350,6 @@ class _BalancePageState extends State<BalancePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Карта балансу з кнопками
               SizedBox(
                 width: double.infinity,
                 child: Card(
@@ -44,16 +368,16 @@ class _BalancePageState extends State<BalancePage> {
                           size: 40,
                           color: Colors.blue[700],
                         ),
-                        SizedBox(height: 10),
-                        Text(
+                        const SizedBox(height: 10),
+                        const Text(
                           "Поточний баланс",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        Text(
+                        const SizedBox(height: 10),
+                        const Text(
                           "0.0 грн",
                           style: TextStyle(
                             fontSize: 24,
@@ -61,7 +385,7 @@ class _BalancePageState extends State<BalancePage> {
                             color: Colors.green,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           "Мінімальна сума для виведення: 200 грн",
                           style: TextStyle(
@@ -69,7 +393,7 @@ class _BalancePageState extends State<BalancePage> {
                             color: Colors.grey[600],
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           "Комісія платформи: 5%",
                           style: TextStyle(
@@ -77,25 +401,22 @@ class _BalancePageState extends State<BalancePage> {
                             color: Colors.grey[600],
                           ),
                         ),
-                        SizedBox(height: 20),
-                        // Кнопки всередині картки
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                              onPressed: () {
-                                // Порожня дія
-                              },
+                              onPressed: () => _showDepositBottomSheet(context),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                   vertical: 10,
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 "Внести кошти",
                                 style: TextStyle(
                                   fontSize: 14,
@@ -103,11 +424,10 @@ class _BalancePageState extends State<BalancePage> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             OutlinedButton(
-                              onPressed: () {
-                                // Порожня дія
-                              },
+                              onPressed:
+                                  () => _showWithdrawBottomSheet(context),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
                                   color: Colors.blue[700]!,
@@ -116,7 +436,7 @@ class _BalancePageState extends State<BalancePage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                   vertical: 10,
                                 ),
@@ -137,30 +457,27 @@ class _BalancePageState extends State<BalancePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-
-              // Історія транзакцій (заглушки)
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "Історія транзакцій",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(
                 child: ListView(
                   children: [
-                    // Група: 25.03.2025
                     Text(
                       "25.03.2025",
                       style: TextStyle(
-                        fontSize: 14, // Менший шрифт
-                        fontWeight: FontWeight.normal, // Тонший
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
                         color: Colors.grey[700],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Container(
-                      margin: EdgeInsets.only(bottom: 5),
-                      padding: EdgeInsets.all(10),
+                      margin: const EdgeInsets.only(bottom: 5),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(10),
@@ -169,12 +486,12 @@ class _BalancePageState extends State<BalancePage> {
                       child: Row(
                         children: [
                           Icon(Icons.credit_card, color: Colors.blue[700]),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Поповнення з карти",
                                   style: TextStyle(
                                     fontSize: 14,
@@ -202,21 +519,19 @@ class _BalancePageState extends State<BalancePage> {
                         ],
                       ),
                     ),
-
-                    // Група: 24.03.2025
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     Text(
                       "24.03.2025",
                       style: TextStyle(
-                        fontSize: 14, // Менший шрифт
-                        fontWeight: FontWeight.normal, // Тонший
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
                         color: Colors.grey[700],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Container(
-                      margin: EdgeInsets.only(bottom: 5),
-                      padding: EdgeInsets.all(10),
+                      margin: const EdgeInsets.only(bottom: 5),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.red[50],
                         borderRadius: BorderRadius.circular(10),
@@ -224,12 +539,12 @@ class _BalancePageState extends State<BalancePage> {
                       child: Row(
                         children: [
                           Icon(Icons.arrow_downward, color: Colors.red[700]),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Виведення на картку",
                                   style: TextStyle(
                                     fontSize: 14,
@@ -257,21 +572,19 @@ class _BalancePageState extends State<BalancePage> {
                         ],
                       ),
                     ),
-
-                    // Група: 23.03.2025
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     Text(
                       "23.03.2025",
                       style: TextStyle(
-                        fontSize: 14, // Менший шрифт
-                        fontWeight: FontWeight.normal, // Тонший
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
                         color: Colors.grey[700],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Container(
-                      margin: EdgeInsets.only(bottom: 5),
-                      padding: EdgeInsets.all(10),
+                      margin: const EdgeInsets.only(bottom: 5),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.green[50],
                         borderRadius: BorderRadius.circular(10),
@@ -280,19 +593,19 @@ class _BalancePageState extends State<BalancePage> {
                             color: Colors.grey.withOpacity(0.2),
                             spreadRadius: 1,
                             blurRadius: 3,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: Row(
                         children: [
                           Icon(Icons.work, color: Colors.green[700]),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Оплата за завдання",
                                   style: TextStyle(
                                     fontSize: 14,
