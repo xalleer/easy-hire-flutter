@@ -86,124 +86,126 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppStyles.backgroundColor,
-      appBar: AppBar(
-        title: Text("Вхід", style: AppStyles.headingStyle),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: AppStyles.formPadding,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Раді вас знову бачити!",
-                    style: AppStyles.headingStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: AppStyles.verticalSpacing),
-
-                  if (isEmailLogin)
-                    CustomTextField(
-                      hintText: "Електронна пошта",
-                      controller: emailController,
-                      validator: Validators.emailValidator,
-                      keyboardType: TextInputType.emailAddress,
-                      prefixIcon: Icon(
-                        Icons.email_outlined,
-                        color: AppStyles.secondaryColor,
-                      ),
-                    )
-                  else
-                    CustomTextField(
-                      hintText: "Номер телефону",
-                      controller: phoneController,
-                      validator: Validators.phoneValidator,
-                      keyboardType: TextInputType.phone,
-                      prefixIcon: Icon(
-                        Icons.phone_outlined,
-                        color: AppStyles.secondaryColor,
-                      ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.translucent,
+      child: Scaffold(
+        backgroundColor: AppStyles.backgroundColor,
+        appBar: AppBar(
+          title: Text("Вхід", style: AppStyles.headingStyle),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: AppStyles.formPadding,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Раді вас знову бачити!",
+                      style: AppStyles.headingStyle,
+                      textAlign: TextAlign.center,
                     ),
-
-                  CustomTextField(
-                    hintText: "Пароль",
-                    controller: passwordController,
-                    obscureText: true,
-                    validator: Validators.passwordValidator,
-                    prefixIcon: Icon(
-                      Icons.lock_outline,
-                      color: AppStyles.secondaryColor,
-                    ),
-                  ),
-                  AuthToggle(
-                    value: isEmailLogin,
-                    onChanged: (value) {
-                      setState(() {
-                        isEmailLogin = value;
-                      });
-                    },
-
-                    leftLabel: "Телефон",
-                    rightLabel: "Пошта",
-                  ),
-
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/forgot_password');
-                      },
-                      child: Text(
-                        "Забули пароль?",
-                        style: TextStyle(color: AppStyles.primaryColor),
-                      ),
-                    ),
-                  ),
-
-                  CustomButton(
-                    text: "Увійти",
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        login();
-                      }
-                    },
-                    isLoading: isLoading,
-                  ),
-
-                  SizedBox(height: AppStyles.verticalSpacing * 2),
-
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Ще немає акаунту? ",
-                          style: TextStyle(color: AppStyles.textSecondaryColor),
+                    SizedBox(height: AppStyles.verticalSpacing),
+                    if (isEmailLogin)
+                      CustomTextField(
+                        hintText: "Електронна пошта",
+                        controller: emailController,
+                        validator: Validators.emailValidator,
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: AppStyles.secondaryColor,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacementNamed(context, '/signup');
-                          },
-                          child: Text(
-                            "Зареєструватися",
+                      )
+                    else
+                      CustomTextField(
+                        hintText: "Номер телефону",
+                        controller: phoneController,
+                        validator: Validators.phoneValidator,
+                        keyboardType: TextInputType.phone,
+                        prefixIcon: Icon(
+                          Icons.phone_outlined,
+                          color: AppStyles.secondaryColor,
+                        ),
+                      ),
+                    CustomTextField(
+                      hintText: "Пароль",
+                      controller: passwordController,
+                      obscureText: true,
+                      validator: Validators.passwordValidator,
+                      prefixIcon: Icon(
+                        Icons.lock_outline,
+                        color: AppStyles.secondaryColor,
+                      ),
+                    ),
+                    AuthToggle(
+                      value: isEmailLogin,
+                      onChanged: (value) {
+                        setState(() {
+                          isEmailLogin = value;
+                        });
+                      },
+                      leftLabel: "Телефон",
+                      rightLabel: "Пошта",
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/forgot_password');
+                        },
+                        child: Text(
+                          "Забули пароль?",
+                          style: TextStyle(color: AppStyles.primaryColor),
+                        ),
+                      ),
+                    ),
+                    CustomButton(
+                      text: "Увійти",
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          login();
+                        }
+                      },
+                      isLoading: isLoading,
+                    ),
+                    SizedBox(height: AppStyles.verticalSpacing * 2),
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Ще немає акаунту? ",
                             style: TextStyle(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold,
+                              color: AppStyles.textSecondaryColor,
                             ),
                           ),
-                        ),
-                      ],
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/signup',
+                              );
+                            },
+                            child: Text(
+                              "Зареєструватися",
+                              style: TextStyle(
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

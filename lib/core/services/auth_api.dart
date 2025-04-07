@@ -36,13 +36,21 @@ class AuthApi extends ApiService {
       body: {'email': email, 'password': password},
     );
 
-    if (response != null && response['status'] != 'error') {
+    if (response['status'] == 'error') {
+      print('Помилка: ${response['message']}');
+      return null;
+    }
+
+    if (response['token'] != null) {
+      print('Токен отримано: ${response['token']}');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String token = response['token'];
       await prefs.setString('authToken', token);
       await prefs.setString('userInfo', jsonEncode(response['user']));
+      return response;
+    } else {
+      return null;
     }
-    return response;
   }
 
   Future<Map<String, dynamic>?> loginPhoneUser({
