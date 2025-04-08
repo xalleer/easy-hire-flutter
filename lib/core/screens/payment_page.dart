@@ -1,37 +1,60 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:flutter/services.dart';
-import '../services/payment_service.dart';
-import 'dart:convert';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'dart:io' show Platform;
 
-class PaymentScreen extends StatefulWidget {
-  final double amount;
-  final String userId;
+class PaymentPage extends StatefulWidget {
+  final String htmlContent;
 
-  const PaymentScreen({required this.amount, required this.userId, super.key});
+  const PaymentPage({required this.htmlContent, super.key});
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  _PaymentPageState createState() => _PaymentPageState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
-  late final WebViewController _controller;
-  bool _isLoading = true;
+class _PaymentPageState extends State<PaymentPage> {
+  late WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
+    print("PaymentPage initialized with HTML: ${widget.htmlContent}");
+    _initializeWebViewController();
+  }
 
+  void _initializeWebViewController() {
     _controller =
         WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setNavigationDelegate(
             NavigationDelegate(
-              onPageStarted: (_) => setState(() => _isLoading = true),
-              onPageFinished: (_) => setState(() => _isLoading = false),
+              onPageStarted: (String url) {
+                print("Page started loading: $url");
+              },
+              onPageFinished: (String url) {
+                print("Page finished loading: $url");
+              },
+              onHttpError: (HttpResponseError error) {
+                print("HTTP Error occurred: ${error.toString()}");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("HTTP Error occurred")),
+                );
+              },
+              onWebResourceError: (WebResourceError error) {
+                print("Web Resource Error: ${error.description}");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Error: ${error.description}")),
+                );
+              },
               onNavigationRequest: (NavigationRequest request) {
-                if (request.url.contains('success')) {
-                  Navigator.pop(context, 'success');
+                // Перевіряємо callback URL від LiqPay
+                if (request.url.contains(
+                  'https://your-backend.com/api/payment/webhook',
+                )) {
+                  print("Callback received: ${request.url}");
+                  // Повертаємо результат оплати назад у BalancePage
+                  Navigator.pop(context, "Payment completed: ${request.url}");
                   return NavigationDecision.prevent;
                 }
                 return NavigationDecision.navigate;
@@ -39,36 +62,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
           );
 
-    Future.microtask(() => _loadPaymentForm());
-  }
-
-  Future<void> _loadPaymentForm() async {
-    try {
-      final paymentService = PaymentService();
-      final paymentData = await paymentService.createPayment(
-        amount: widget.amount,
-        userId: widget.userId,
+    if (widget.htmlContent.isNotEmpty) {
+      _controller.loadRequest(
+        Uri.dataFromString(
+          widget.htmlContent,
+          mimeType: 'text/html',
+          encoding: Encoding.getByName('utf-8'),
+        ),
       );
-
-      final htmlEscape = const HtmlEscape();
-      final data = htmlEscape.convert(paymentData['data']!);
-      final signature = htmlEscape.convert(paymentData['signature']!);
-
-      final htmlContent = '''
-        <html>
-          <body onload="document.forms[0].submit();">
-            <form method="POST" action="https://www.liqpay.ua/api/3/checkout" accept-charset="utf-8">
-              <input type="hidden" name="data" value="$data" />
-              <input type="hidden" name="signature" value="$signature" />
-            </form>
-          </body>
-        </html>
-      ''';
-
-      await _controller.loadHtmlString(htmlContent);
-    } catch (e) {
+    } else {
+      print("Error: HTML content is empty");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Помилка при завантаженні LiqPay: $e')),
+        const SnackBar(content: Text("Error: No HTML content provided")),
       );
     }
   }
@@ -76,21 +81,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Оплата через LiqPay'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context, 'cancel'),
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          if (_isLoading) const Center(child: CircularProgressIndicator()),
-        ],
-      ),
+      appBar: AppBar(title: const Text("Оплата LiqPay")),
+      body:
+          widget.htmlContent.isNotEmpty
+              ? WebViewWidget(controller: _controller)
+              : const Center(child: Text("No content to display")),
     );
   }
 }

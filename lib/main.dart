@@ -1,4 +1,5 @@
 import 'package:easy_hire/core/screens/home_page.dart';
+import 'package:easy_hire/core/screens/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'core/screens/welcome_page.dart';
 import 'core/screens/forgot_password_page.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignUpPage(),
         '/signup-next': (context) => SignUpNextPage(),
         '/home': (context) => HomePage(),
+        '/settings': (context) => SettingsPage(),
 
         '/verify_code': (context) {
           final args =

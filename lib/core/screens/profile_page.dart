@@ -67,6 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppStyles.backgroundColor,
       appBar: AppBar(
         title: Text("Профіль", style: AppStyles.headingStyle),
         centerTitle: true,
@@ -75,9 +76,9 @@ class _ProfilePageState extends State<ProfilePage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.grey[700]),
+            icon: Icon(Icons.settings, color: AppStyles.textSecondaryColor),
             onPressed: () {
-              // Перехід до налаштувань (поки порожня дія)
+              Navigator.pushNamed(context, '/settings');
             },
           ),
         ],
@@ -85,376 +86,247 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 20.0,
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Карта профілю
-                SizedBox(
-                  width: double.infinity,
-                  child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: NetworkImage(
-                              avatarUrl ?? 'https://www.example.com/avatar.png',
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            name ?? "Ім'я користувача",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            email ?? "example@mail.com",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            phone ?? "+380123456789",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          // Категорії роботи
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Категорії роботи",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[800],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 4.0,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              Chip(
-                                label: Text("Фізична праця"),
-                                backgroundColor: Colors.blue[100],
-                                labelStyle: TextStyle(
-                                  color: Colors.blue[800],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                              ),
-                              Chip(
-                                label: Text("Водіння"),
-                                backgroundColor: Colors.blue[100],
-                                labelStyle: TextStyle(
-                                  color: Colors.blue[800],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                              ),
-                              Chip(
-                                label: Text("Будівництво"),
-                                backgroundColor: Colors.blue[100],
-                                labelStyle: TextStyle(
-                                  color: Colors.blue[800],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          // Міста/села
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Міста/села",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[800],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 4.0,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              Chip(
-                                label: Text("Київ"),
-                                backgroundColor: Colors.green[100],
-                                labelStyle: TextStyle(
-                                  color: Colors.green[800],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                              ),
-                              Chip(
-                                label: Text("Сушки"),
-                                backgroundColor: Colors.green[100],
-                                labelStyle: TextStyle(
-                                  color: Colors.green[800],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          // Кнопка редагування
-                          OutlinedButton.icon(
-                            onPressed: () {
-                              // Перехід до редагування профілю (поки порожня дія)
-                            },
-                            icon: Icon(
-                              Icons.edit,
-                              size: 18,
-                              color: Colors.blue[700],
-                            ),
-                            label: Text(
-                              "Редагувати",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.blue[700],
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                color: Colors.blue[700]!,
-                                width: 2,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 10,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Рейтинг і відгуки
-                Text(
-                  "Рейтинг та відгуки",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
+                // Profile Card
                 Card(
-                  elevation: 2,
+                  elevation: 4,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(5, (index) {
-                            if (index < rating!) {
-                              return Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 24,
-                              );
-                            } else if (index < rating! + 0.5) {
-                              return Icon(
-                                Icons.star_half,
-                                color: Colors.yellow[700],
-                                size: 24,
-                              );
-                            } else {
-                              return Icon(
-                                Icons.star_border,
-                                color: Colors.yellow[700],
-                                size: 24,
-                              );
-                            }
-                          }),
+                        // Avatar
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(avatarUrl ?? ''),
+                          backgroundColor: Colors.grey[200],
                         ),
-                        SizedBox(height: 5),
-                        Center(
-                          child: Text(
-                            "$rating / 5.0",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 15),
+                        SizedBox(height: 16),
+                        // Name
                         Text(
-                          "Відгуки",
+                          name ?? "Ім'я користувача",
+                          style: AppStyles.headingStyle.copyWith(fontSize: 22),
+                        ),
+                        SizedBox(height: 8),
+                        // Email and Phone
+                        Text(
+                          email ?? "example@mail.com",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: AppStyles.textSecondaryColor,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            "Чудовий виконавець!",
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          subtitle: Text(
-                            "Олена, 25.03.2025",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                            ],
+                        SizedBox(height: 4),
+                        Text(
+                          phone ?? "+380123456789",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppStyles.textSecondaryColor,
                           ),
                         ),
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            "Швидко і якісно",
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          subtitle: Text(
-                            "Петро, 24.03.2025",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
+                        SizedBox(height: 20),
+                        // Work Categories
+                        _buildSectionTitle("Категорії роботи"),
+                        SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            _buildChip("Фізична праця", AppStyles.primaryColor),
+                            _buildChip("Водіння", AppStyles.primaryColor),
+                            _buildChip("Будівництво", AppStyles.primaryColor),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        // Work Locations
+                        _buildSectionTitle("Міста/села"),
+                        SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            _buildChip("Київ", AppStyles.successColor),
+                            _buildChip("Сушки", AppStyles.successColor),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        // Edit Button
+                        OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: AppStyles.primaryColor,
+                              width: 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
                             ),
                           ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                              Icon(
-                                Icons.star_border,
-                                color: Colors.yellow[700],
-                                size: 16,
-                              ),
-                            ],
+                          child: Text(
+                            "Редагувати",
+                            style: TextStyle(
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 24),
 
-                // Кнопка "Вийти"
-                CustomButton(
-                  text: "Вийти",
-                  onPressed: () {
-                    logout(context);
-                  },
+                // Rating Section
+                _buildSectionTitle("Рейтинг та відгуки"),
+                SizedBox(height: 12),
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        // Rating Stars
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(5, (index) {
+                            if (index < rating!.floor()) {
+                              return Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 24,
+                              );
+                            } else if (index < rating!) {
+                              return Icon(
+                                Icons.star_half,
+                                color: Colors.amber,
+                                size: 24,
+                              );
+                            } else {
+                              return Icon(
+                                Icons.star_border,
+                                color: Colors.amber,
+                                size: 24,
+                              );
+                            }
+                          }),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "${rating?.toStringAsFixed(1)} / 5.0",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppStyles.textSecondaryColor,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        // Reviews
+                        _buildReview(
+                          "Чудовий виконавець!",
+                          "Олена, 25.03.2025",
+                          5,
+                        ),
+                        _buildReview("Швидко і якісно", "Петро, 24.03.2025", 4),
+                      ],
+                    ),
+                  ),
                 ),
+                SizedBox(height: 32),
+
+                // Logout Button
+                CustomButton(text: "Вийти", onPressed: () => logout(context)),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // Helper method for section titles
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: AppStyles.textSecondaryColor.withOpacity(0.9),
+      ),
+    );
+  }
+
+  // Helper method for chips
+  Widget _buildChip(String label, Color color) {
+    return Chip(
+      label: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+      ),
+      backgroundColor: color.withOpacity(0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    );
+  }
+
+  // Helper method for reviews
+  Widget _buildReview(String text, String author, int stars) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  author,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppStyles.textSecondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 8),
+          Row(
+            children: List.generate(5, (index) {
+              return Icon(
+                index < stars ? Icons.star : Icons.star_border,
+                color: Colors.amber,
+                size: 16,
+              );
+            }),
+          ),
+        ],
       ),
     );
   }

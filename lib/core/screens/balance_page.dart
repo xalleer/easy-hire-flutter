@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/app_styles.dart';
 import 'payment_page.dart'; // Додайте імпорт PaymentScreen
+import '../services/payment_service.dart';
 
 class BalancePage extends StatefulWidget {
   const BalancePage({super.key});
@@ -15,6 +16,7 @@ class _BalancePageState extends State<BalancePage> {
   final TextEditingController _withdrawAmountController =
       TextEditingController();
   final TextEditingController _cardNumberController = TextEditingController();
+  final PaymentService _paymentService = PaymentService();
   bool _saveCard = false;
 
   void _showDepositBottomSheet(BuildContext context) {
@@ -24,10 +26,10 @@ class _BalancePageState extends State<BalancePage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-      builder: (BuildContext context) {
+      builder: (BuildContext bottomSheetContext) {
         return Container(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+            bottom: MediaQuery.of(bottomSheetContext).viewInsets.bottom + 20,
             left: 20,
             right: 20,
             top: 20,
@@ -50,7 +52,7 @@ class _BalancePageState extends State<BalancePage> {
                     ),
                     IconButton(
                       icon: Icon(Icons.close, color: Colors.grey[600]),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.pop(bottomSheetContext),
                     ),
                   ],
                 ),
@@ -61,7 +63,6 @@ class _BalancePageState extends State<BalancePage> {
                     decimal: true,
                   ),
                   decoration: InputDecoration(
-                    labelText: "Сума поповнення (грн)",
                     hintText: "Введіть суму",
                     prefixIcon: Icon(
                       Icons.attach_money,
@@ -102,34 +103,74 @@ class _BalancePageState extends State<BalancePage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       String amountText = _depositAmountController.text;
                       if (amountText.isNotEmpty) {
                         double amount = double.tryParse(amountText) ?? 0;
                         if (amount >= 50) {
-                          Navigator.pop(context); // Закриваємо BottomSheet
-                          Navigator.push(
+                          Navigator.pop(
+                            bottomSheetContext,
+                          ); // Закриваємо BottomSheet
+                          final scaffoldMessenger = ScaffoldMessenger.of(
                             context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => PaymentScreen(
-                                    amount: amount,
-                                    userId:
-                                        '67ca1ca9e4b4255ded20074d', // Замініть на реальний userId
-                                  ),
-                            ),
-                          ).then((result) {
-                            if (result != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Оплата успішна: $result'),
-                                ),
+                          ); // Зберігаємо ScaffoldMessenger
+                          try {
+                            print(
+                              "Starting payment process for amount: $amount",
+                            );
+                            String
+                            htmlContent = await _paymentService.createTopUp(
+                              amount: amount,
+                              userId:
+                                  "67ca1ca9e4b4255ded20074d", // Замініть на реальний userId
+                            );
+                            print("HTML received: $htmlContent");
+                            print("Is widget mounted? $mounted");
+                            if (mounted) {
+                              print("Navigating to PaymentPage");
+                              await Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => PaymentPage(
+                                            htmlContent: htmlContent,
+                                          ),
+                                    ),
+                                  )
+                                  .then((result) {
+                                    print(
+                                      "Returned from PaymentPage with result: $result",
+                                    );
+                                    if (result != null && mounted) {
+                                      scaffoldMessenger.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Оплата успішна: $result',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    _depositAmountController.clear();
+                                  });
+                            } else {
+                              print(
+                                "Widget is not mounted, navigation skipped",
                               );
                             }
-                            _depositAmountController.clear();
-                          });
+                          } catch (e) {
+                            print("Error during payment: $e");
+                            if (mounted) {
+                              scaffoldMessenger.showSnackBar(
+                                SnackBar(content: Text('Помилка: $e')),
+                              );
+                            } else {
+                              print(
+                                "Cannot show SnackBar: Widget is not mounted",
+                              );
+                            }
+                          }
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          ScaffoldMessenger.of(bottomSheetContext).showSnackBar(
                             const SnackBar(
                               content: Text("Сума має бути не менше 50 грн"),
                             ),
@@ -206,7 +247,6 @@ class _BalancePageState extends State<BalancePage> {
                     decimal: true,
                   ),
                   decoration: InputDecoration(
-                    labelText: "Сума виведення (грн)",
                     hintText: "Введіть суму",
                     prefixIcon: Icon(Icons.money_off, color: Colors.red[700]),
                     filled: true,
@@ -223,7 +263,6 @@ class _BalancePageState extends State<BalancePage> {
                   keyboardType: TextInputType.number,
                   maxLength: 16,
                   decoration: InputDecoration(
-                    labelText: "Номер картки",
                     hintText: "XXXX XXXX XXXX XXXX",
                     prefixIcon: Icon(Icons.credit_card, color: Colors.red[700]),
                     filled: true,

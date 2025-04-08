@@ -13,8 +13,9 @@ class TasksPage extends StatefulWidget {
 class _TasksPageState extends State<TasksPage> {
   final TaskApi taskApi = TaskApi();
   List<dynamic>? tasks;
-  dynamic acceptedTask; // To store the accepted task
+  dynamic acceptedTask;
   bool isLoading = true;
+  bool isOnline = false;
 
   @override
   void initState() {
@@ -22,7 +23,6 @@ class _TasksPageState extends State<TasksPage> {
     _checkForAcceptedTask();
   }
 
-  // First check if there's an accepted task
   Future<void> _checkForAcceptedTask() async {
     setState(() {
       isLoading = true;
@@ -30,36 +30,27 @@ class _TasksPageState extends State<TasksPage> {
 
     try {
       final response = await taskApi.getAcceptedTask();
-
-      // Debug output to verify response structure
       print("getAcceptedTask response: $response");
 
       if (response != null) {
         if (response is Map) {
-          // Direct task object
           if (response.containsKey('title') || response.containsKey('_id')) {
             setState(() {
               acceptedTask = response;
               isLoading = false;
             });
             return;
-          }
-          // Task nested in response object
-          else if (response.containsKey('task') && response['task'] != null) {
+          } else if (response.containsKey('task') && response['task'] != null) {
             setState(() {
               acceptedTask = response['task'];
               isLoading = false;
             });
             return;
-          }
-          // Empty response or errors
-          else if (response['status'] == 'error' || response.isEmpty) {
+          } else if (response['status'] == 'error' || response.isEmpty) {
             print("No accepted task found, fetching available tasks");
           }
         }
       }
-
-      // If we reach here, no accepted task was found
       _fetchTasks();
     } catch (e) {
       print("Error in _checkForAcceptedTask: $e");
@@ -70,7 +61,7 @@ class _TasksPageState extends State<TasksPage> {
   Future<void> _fetchTasks() async {
     setState(() {
       isLoading = true;
-      acceptedTask = null; // Clear any previous accepted task
+      acceptedTask = null;
     });
 
     try {
@@ -115,10 +106,8 @@ class _TasksPageState extends State<TasksPage> {
     }
   }
 
-  // Function to display the accepted task
   Widget _buildAcceptedTaskView() {
     print("Building accepted task view for: ${acceptedTask['title']}");
-
     return Padding(
       padding: AppStyles.formPadding,
       child: Column(
@@ -212,7 +201,6 @@ class _TasksPageState extends State<TasksPage> {
                     onPressed: () {
                       _cancelTask(acceptedTask['_id']);
                     },
-                    // backgroundColor: AppStyles.errorColor,
                   ),
                 ],
               ),
@@ -248,7 +236,7 @@ class _TasksPageState extends State<TasksPage> {
           setState(() {
             acceptedTask = null;
           });
-          _fetchTasks(); // Load available tasks after cancellation
+          _fetchTasks();
         } else {
           _showErrorSnackBar(
             "❌ ${response?['message'] ?? 'Помилка скасування завдання'}",
@@ -414,7 +402,7 @@ class _TasksPageState extends State<TasksPage> {
         final response = await taskApi.acceptTask(taskId);
         if (response != null && response['status'] != 'error') {
           _showSuccessSnackBar("✅ Завдання #$taskId прийнято");
-          _checkForAcceptedTask(); // Refresh to show the accepted task
+          _checkForAcceptedTask();
         } else {
           _showErrorSnackBar(
             "❌ ${response?['message'] ?? 'Помилка прийняття завдання'}",
@@ -446,11 +434,91 @@ class _TasksPageState extends State<TasksPage> {
     );
   }
 
+  // Custom Toggle Widget
+  Widget _buildCustomToggle() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color:
+            isOnline
+                ? AppStyles.successColor.withOpacity(0.1)
+                : AppStyles.errorColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isOnline ? AppStyles.successColor : AppStyles.errorColor,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isOnline ? Icons.wifi : Icons.wifi_off,
+            size: 16,
+            color: isOnline ? AppStyles.successColor : AppStyles.errorColor,
+          ),
+          SizedBox(width: 4),
+          Text(
+            isOnline ? 'Онлайн' : 'Офлайн',
+            style: TextStyle(
+              color: isOnline ? AppStyles.successColor : AppStyles.errorColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(width: 4),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isOnline = !isOnline;
+                if (isOnline) {
+                  _checkForAcceptedTask();
+                }
+              });
+            },
+            child: Container(
+              width: 36,
+              height: 20,
+              decoration: BoxDecoration(
+                color: isOnline ? AppStyles.successColor : Colors.grey[300],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    left: isOnline ? 18 : 2,
+                    top: 2,
+                    child: Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Debug output for the current state
     print(
-      "Current state - isLoading: $isLoading, acceptedTask: ${acceptedTask != null}, tasks count: ${tasks?.length}",
+      "Current state - isLoading: $isLoading, acceptedTask: ${acceptedTask != null}, tasks count: ${tasks?.length}, isOnline: $isOnline",
     );
 
     return Scaffold(
@@ -465,11 +533,23 @@ class _TasksPageState extends State<TasksPage> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.refresh, color: AppStyles.primaryColor),
-            onPressed: () {
-              _checkForAcceptedTask(); // Always check for accepted task first
-            },
+          Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Row(
+              children: [
+                _buildCustomToggle(),
+                SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(Icons.refresh, color: AppStyles.primaryColor),
+                  onPressed:
+                      isOnline
+                          ? () {
+                            _checkForAcceptedTask();
+                          }
+                          : null,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -481,8 +561,35 @@ class _TasksPageState extends State<TasksPage> {
                     color: AppStyles.primaryColor,
                   ),
                 )
+                : !isOnline
+                ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.cloud_off,
+                        size: 64,
+                        color: AppStyles.textSecondaryColor,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        "Ви в офлайн режимі",
+                        style: TextStyle(
+                          color: AppStyles.textSecondaryColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        "Перейдіть в онлайн щоб переглядати завдання",
+                        style: TextStyle(color: AppStyles.textSecondaryColor),
+                      ),
+                    ],
+                  ),
+                )
                 : acceptedTask != null
-                ? _buildAcceptedTaskView() // Show accepted task view
+                ? _buildAcceptedTaskView()
                 : tasks == null || tasks!.isEmpty
                 ? Center(
                   child: Text(
