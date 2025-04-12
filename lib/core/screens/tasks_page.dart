@@ -1,7 +1,10 @@
+import 'package:easy_hire/core/services/user_api.dart';
 import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
 import '../constants/app_styles.dart';
 import '../services/task_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -20,7 +23,22 @@ class _TasksPageState extends State<TasksPage> {
   @override
   void initState() {
     super.initState();
-    _checkForAcceptedTask();
+    _initializeStatusAndTasks();
+  }
+
+  Future<void> _initializeStatusAndTasks() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Отримуємо статус користувача
+    String? userStatus = await getUserStatus();
+    setState(() {
+      isOnline = userStatus == 'online';
+    });
+
+    // Перевіряємо прийняте завдання
+    await _checkForAcceptedTask();
   }
 
   Future<void> _checkForAcceptedTask() async {
@@ -414,6 +432,32 @@ class _TasksPageState extends State<TasksPage> {
     }
   }
 
+  Future<void> _changeStatus(String? status) async {
+    try {
+      final response = await UserApi().changeStatus(status);
+      // Оновлюємо локальне сховище
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? userInfoJson = prefs.getString('userInfo');
+      if (userInfoJson != null) {
+        Map<String, dynamic> userInfo = jsonDecode(userInfoJson);
+        userInfo['status'] = status;
+        await prefs.setString('userInfo', jsonEncode(userInfo));
+      }
+    } catch (e) {
+      _showErrorSnackBar("❌ Помилка: $e");
+    }
+  }
+
+  Future<String?> getUserStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userInfoJson = prefs.getString('userInfo');
+
+    if (userInfoJson == null) return null;
+
+    Map<String, dynamic> userInfo = jsonDecode(userInfoJson);
+    return userInfo['status'];
+  }
+
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -434,7 +478,6 @@ class _TasksPageState extends State<TasksPage> {
     );
   }
 
-  // Custom Toggle Widget
   Widget _buildCustomToggle() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -468,13 +511,15 @@ class _TasksPageState extends State<TasksPage> {
           ),
           SizedBox(width: 4),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               setState(() {
                 isOnline = !isOnline;
-                if (isOnline) {
-                  _checkForAcceptedTask();
-                }
               });
+              String newStatus = isOnline ? 'online' : 'offline';
+              await _changeStatus(newStatus);
+              if (isOnline) {
+                _checkForAcceptedTask();
+              }
             },
             child: Container(
               width: 36,
